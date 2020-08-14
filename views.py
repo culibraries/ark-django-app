@@ -53,7 +53,7 @@ class ArkServer(APIView):
             elif result[0][1] == 2:
                 # expanded response
                 return Response(item)
-            elif result[0][1] = > 3:
+            elif result[0][1] >= 3:
                 # check for ? ?? or ??? if no question marks resolve
                 return Response(item)
             else:
