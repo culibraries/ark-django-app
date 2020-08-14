@@ -1,12 +1,12 @@
 _author__ = 'mstacy'
 from django.urls import include, path, re_path
-from .views import ArkServer #LibcalTokenView, SierraSearchView
+from .views import ArkServer, arkAcknowledgement #LibcalTokenView, SierraSearchView
 
 
 
 urlpatterns = [
      path('/', ArkServer.as_view(),name='ark-list'),
-     re_path('/(?P<naan>[^/]+)/$',ArkServer.as_view(),name='ark-statement'),
+     re_path('/(?P<naan>[^/]+)/$',arkAcknowledgement.as_view(),name='ark-statement'),
      re_path('/(?P<naan>[^/]+)/(?P<ark>[^/]+)/$',ArkServer.as_view(),name='ark-detail'),
      
 ]

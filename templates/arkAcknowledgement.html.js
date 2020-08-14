@@ -1,0 +1,2 @@
+<pre style="word-wrap: break-word; white-space: pre-wrap;">The CU Boulder Libraries' assigns identifiers within the ARK domain under the NAAN 47540 and according to the following principles:
+* No ARK shall be re-assigned; that is, once an ARK-to-object association has been made public, that association shall be considered unique into the indefinite future.</pre>
