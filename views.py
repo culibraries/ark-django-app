@@ -56,6 +56,8 @@ class ArkServer(APIView):
             elif result[0][1] = > 3:
                 # check for ? ?? or ??? if no question marks resolve
                 return Response(item)
+            else:
+                raise Exception('Some Error.')
         else:
             data = {
                 "error": "Error occured both NAAN and ARK are required for GET operations. Please "}
