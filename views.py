@@ -100,11 +100,13 @@ class ArkServer(APIView):
     def saveCatlog(self, request):
         data = CatalogData.post(
             request, database='Catalog', collection=cybercom_ark_collection, format='json')
+        return data
 
     def mint(self, naan, template, prefix):
         ark = arkpy.mint(naan, template, prefix)
         while !(self.checkArk(ark)):
             ark = arkpy.mint(naan, template, prefix)
+
         return ark
 
     def checkArk(self, request, ark):
