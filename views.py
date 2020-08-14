@@ -11,6 +11,10 @@ from .permission import arkPermission
 from itertools import groupby
 from django.http import HttpResponseRedirect
 from catalog.views import Catalog, CatalogData, CatalogDataDetail
+from data_store.mongo_paginator import MongoDataPagination
+from api import config
+from rest_framework.settings import api_settings
+# (DB_MongoClient, database, collection, query=None, page=1, nPerPage=None, uri=''):
 
 cybercom_ark_collection = os.getenv('ARK_CATALOG_COLLECTION', 'ark')
 
@@ -27,14 +31,35 @@ class arkAcknowledgement(APIView):
 
 class ArkServer(APIView):
     permission_classes = (arkPermission,)
+    connect_uri = config.DATA_STORE_MONGO_URI
+
+    def __init__(self):
+        self.db = MongoClient(host=self.connect_uri)
 
     def get(self, request, naan=None, ark=None, format=None):
         if not request.GET._mutable:
             request.GET._mutable = True
+        url = request and request.build_absolute_uri() or ''
         if not naan:
             # return list of arks
             #request.GET['collection'] = cybercom_ark_collection
-            return CatalogData.get(request, database='Catalog', collection=cybercom_ark_collection, format='json')
+            page = int(request.query_params.get('page', '1'))
+            page_size = request.query_params.get(api_settings.user_settings.get('PAGINATE_BY_PARAM', 'page_size'),
+                                                 api_settings.user_settings.get('PAGINATE_BY', 10))
+            try:
+                page = int(request.query_params.get('page', 1))
+            except:
+                page = 1
+            try:
+                page_size = int(page_size)
+            except:
+                page_size = int(
+                    api_settings.user_settings.get('PAGINATE_BY', 25))
+
+            data = MongoDataPagination(
+                self.db, 'Catalog', cybercom_ark_collection, query={}, page=page, nPerPage=page_size, uri=url)
+            return Response(data)
+            # return CatalogData.get(database='Catalog', collection=cybercom_ark_collection, format='json')
         elif naan and ark:
             # check for ? ?? or ??? if no question marks resolve
             url = request.build_absolute_uri()
