@@ -104,7 +104,7 @@ class ArkServer(APIView):
 
     def mint(self, naan, template, prefix):
         ark = arkpy.mint(naan, template, prefix)
-        while !(self.checkArk(ark)):
+        while (not (self.checkArk(ark))):
             ark = arkpy.mint(naan, template, prefix)
 
         return ark
