@@ -1,14 +1,16 @@
-_author__ = 'mstacy'
+# LibcalTokenView, SierraSearchView
+from .views import ArkServer, arkAcknowledgement
 from django.urls import include, path, re_path
-from .views import ArkServer, arkAcknowledgement #LibcalTokenView, SierraSearchView
-
+_author__ = 'mstacy'
 
 
 urlpatterns = [
-     path('/', ArkServer.as_view(),name='ark-list'),
-     re_path('/(?P<naan>[^/]+)/$',arkAcknowledgement.as_view(),name='ark-statement'),
-     re_path('/(?P<naan>[^/]+)/(?P<ark>[^/]+)/$',ArkServer.as_view(),name='ark-detail'),
-     
+    path('', ArkServer.as_view(), name='ark-list'),
+    re_path('/(?P<naan>[^/]+)/$',
+            arkAcknowledgement.as_view(), name='ark-statement'),
+    re_path('/(?P<naan>[^/]+)/(?P<ark>[^/]+)/$',
+            ArkServer.as_view(), name='ark-detail'),
+
 ]
 
 # re_path('/(?P<database>[^/]+)/(?P<collection>[^/]+)/(?P<id>[^/]+)/$', CatalogDataDetail.as_view(),
