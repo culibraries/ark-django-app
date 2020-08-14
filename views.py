@@ -26,7 +26,7 @@ class arkAcknowledgement(APIView):
 
 
 class ArkServer(APIView):
-    permission_classes = (arkPermission)
+    permission_classes = (arkPermission,)
 
     def get(self, request, naan=None, ark=None, format=None):
         if not request.GET._mutable:
