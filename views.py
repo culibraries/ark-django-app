@@ -121,10 +121,25 @@ class ArkServer(APIView):
         return ark
 
     def pullRecord(self, request, naan, ark):
+        url = request and request.build_absolute_uri() or ''
+        page = int(request.query_params.get('page', '1'))
+        page_size = request.query_params.get(api_settings.user_settings.get('PAGINATE_BY_PARAM', 'page_size'),
+                                             api_settings.user_settings.get('PAGINATE_BY', 10))
+        try:
+            page = int(request.query_params.get('page', 1))
+        except:
+            page = 1
+        try:
+            page_size = int(page_size)
+        except:
+            page_size = int(
+                api_settings.user_settings.get('PAGINATE_BY', 25))
         query = '{"format":{"ark":"' + naan + '/' + ark + '"}'
-        request.GET['query'] = query
-        data = CatalogData.get(request, database='Catalog',
-                               collection=cybercom_ark_collection, format='json')
+        data = MongoDataPagination(
+            self.db, 'catalog', cybercom_ark_collection, query=query, page=page, nPerPage=page_size, uri=url)
+        # request.GET['query'] = query
+        # data = CatalogData.get(request, database='Catalog',
+        #                        collection=cybercom_ark_collection, format='json')
 
         return data
 
