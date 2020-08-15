@@ -58,7 +58,7 @@ class ArkServer(APIView):
                     api_settings.user_settings.get('PAGINATE_BY', 25))
 
             data = MongoDataPagination(
-                self.db, 'Catalog', cybercom_ark_collection, query={}, page=page, nPerPage=page_size, uri=url)
+                self.db, 'catalog', cybercom_ark_collection, query={}, page=page, nPerPage=page_size, uri=url)
             return Response(data)
             # return CatalogData.get(database='Catalog', collection=cybercom_ark_collection, format='json')
         elif naan and ark:
