@@ -32,11 +32,21 @@ class arkAcknowledgement(APIView):
         return Response({}, template_name='arkAcknowledgement.html.js')
 
 
+class arkMetadata(APIView):
+    """
+    A view that returns CU Boulder Ark Metadata.
+    """
+    renderer_classes = [TemplateHTMLRenderer]
+
+    def get(self, request, naan=None, format=None):
+        return Response({}, template_name='metadataAcknowledgement.html.js')
+
+
 class ArkServer(APIView):
     permission_classes = (arkPermission,)
     connect_uri = config.DATA_STORE_MONGO_URI
-    renderer_classes = [mongoJSONRenderer, DataBrowsableAPIRenderer,
-                        mongoJSONPRenderer, XMLRenderer]
+    renderer_classes = [mongoJSONRenderer, mongoJSONPRenderer,
+                        XMLRenderer, DataBrowsableAPIRenderer]
 
     def __init__(self):
         self.db = MongoClient(host=self.connect_uri)
@@ -79,15 +89,12 @@ class ArkServer(APIView):
             if not result:
                 # Resolve
                 return HttpResponseRedirect(item["resolve_url"])
-            elif result[0][1] == 1:
-                # min response
-                return Response(item)
-            elif result[0][1] == 2:
+            elif result[0][1] >= 2:
                 # expanded response
                 return Response(item)
-            elif result[0][1] >= 3:
-                # check for ? ?? or ??? if no question marks resolve
-                return Response(item)
+            # elif result[0][1] >= 3:
+            #     # check for ? ?? or ??? if no question marks resolve
+            #     return Response(item)
             else:
                 raise Exception('Some Error.')
         else:
