@@ -10,8 +10,8 @@ urlpatterns = [
          arkAcknowledgement.as_view(), name='ark-statement'),
     path('<naan>/<ark>',
          ArkServer.as_view(), name='ark-detail'),
-    path('<naan>/<ark>?',
-         arkAcknowledgement.as_view(), name='ark-statement'),
+    re_path(r'<naan>/<ark>\?',
+            arkAcknowledgement.as_view(), name='ark-statement'),
 
 
 ]
