@@ -14,7 +14,6 @@ from catalog.views import Catalog, CatalogData, CatalogDataDetail
 from data_store.mongo_paginator import MongoDataPagination
 from data_store.renderer import DataBrowsableAPIRenderer, mongoJSONPRenderer, mongoJSONRenderer
 from rest_framework_xml.renderers import XMLRenderer
-from rest_framework_yaml.renderers import YAMLRenderer
 from api import config
 from rest_framework.settings import api_settings
 from pymongo import MongoClient
@@ -37,7 +36,7 @@ class ArkServer(APIView):
     permission_classes = (arkPermission,)
     connect_uri = config.DATA_STORE_MONGO_URI
     renderer_classes = (DataBrowsableAPIRenderer, mongoJSONRenderer,
-                        mongoJSONPRenderer, XMLRenderer, YAMLRenderer)
+                        mongoJSONPRenderer, XMLRenderer)
 
     def __init__(self):
         self.db = MongoClient(host=self.connect_uri)
@@ -46,6 +45,7 @@ class ArkServer(APIView):
         if not request.GET._mutable:
             request.GET._mutable = True
         url = request and request.build_absolute_uri() or ''
+        format = format or 'json'
         if not naan:
             # return list of arks
             #request.GET['collection'] = cybercom_ark_collection
