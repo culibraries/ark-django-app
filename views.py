@@ -68,7 +68,8 @@ class ArkServer(APIView):
             # return CatalogData.get(database='Catalog', collection=cybercom_ark_collection, format='json')
         elif naan and ark:
             # check for ? ?? or ??? if no question marks resolve
-            url = request.build_absolute_uri()
+            url = request.get_full_path()
+            # build_absolute_uri()
             groups = groupby(url)
             result = [(label, sum(1 for _ in group))
                       for label, group in groups if label == '?']
