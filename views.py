@@ -13,7 +13,6 @@ from django.http import HttpResponseRedirect
 from catalog.views import Catalog, CatalogData, CatalogDataDetail
 from data_store.mongo_paginator import MongoDataPagination
 from data_store.renderer import DataBrowsableAPIRenderer, mongoJSONPRenderer, mongoJSONRenderer
-from .renderer import customMongoJSONRenderer
 from rest_framework_xml.renderers import XMLRenderer
 from api import config
 from rest_framework.settings import api_settings
@@ -46,8 +45,8 @@ class arkMetadata(APIView):
 class ArkServer(APIView):
     permission_classes = (arkPermission,)
     connect_uri = config.DATA_STORE_MONGO_URI
-    renderer_classes = [customMongoJSONRenderer,
-                        XMLRenderer, DataBrowsableAPIRenderer]
+    renderer_classes = [mongoJSONRenderer, DataBrowsableAPIRenderer,
+                        XMLRenderer]
     # mongoJSONRenderer,
     # XMLRenderer, mongoJSONRenderer, DataBrowsableAPIRenderer
 
