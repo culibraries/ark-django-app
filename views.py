@@ -14,6 +14,7 @@ from catalog.views import Catalog, CatalogData, CatalogDataDetail
 from data_store.mongo_paginator import MongoDataPagination
 from api import config
 from rest_framework.settings import api_settings
+from pymongo import MongoClient
 # (DB_MongoClient, database, collection, query=None, page=1, nPerPage=None, uri=''):
 
 cybercom_ark_collection = os.getenv('ARK_CATALOG_COLLECTION', 'ark')
