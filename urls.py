@@ -8,8 +8,8 @@ urlpatterns = [
     path('', ArkServer.as_view(), name='ark-list'),
     path('<int:naan>/',
          arkAcknowledgement.as_view(), name='ark-statement'),
-    re_path('<int:naan>/<ark>/',
-            ArkServer.as_view(), name='ark-detail'),
+    path('<int:naan>/<ark>/',
+         ArkServer.as_view(), name='ark-detail'),
 
 ]
 
