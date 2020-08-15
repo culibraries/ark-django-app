@@ -45,7 +45,7 @@ class arkMetadata(APIView):
 class ArkServer(APIView):
     permission_classes = (arkPermission,)
     connect_uri = config.DATA_STORE_MONGO_URI
-    renderer_classes = [mongoJSONRenderer, mongoJSONRenderer, mongoJSONRenderer
+    renderer_classes = [mongoJSONRenderer, mongoJSONRenderer, mongoJSONRenderer,
                         XMLRenderer, DataBrowsableAPIRenderer]
 
     def __init__(self):
