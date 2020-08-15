@@ -35,8 +35,8 @@ class arkAcknowledgement(APIView):
 class ArkServer(APIView):
     permission_classes = (arkPermission,)
     connect_uri = config.DATA_STORE_MONGO_URI
-    renderer_classes = (mongoJSONRenderer, DataBrowsableAPIRenderer,
-                        mongoJSONPRenderer, XMLRenderer)
+    renderer_classes = [mongoJSONRenderer, DataBrowsableAPIRenderer,
+                        mongoJSONPRenderer, XMLRenderer]
 
     def __init__(self):
         self.db = MongoClient(host=self.connect_uri)
