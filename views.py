@@ -134,7 +134,7 @@ class ArkServer(APIView):
         except:
             page_size = int(
                 api_settings.user_settings.get('PAGINATE_BY', 25))
-        query = '{"format":{"ark":"' + naan + '/' + ark + '"}'
+        query = '{"format":{"ark":"' + naan + '/' + ark + '"}}'
         data = MongoDataPagination(
             self.db, 'catalog', cybercom_ark_collection, query=query, page=page, nPerPage=page_size, uri=url)
         # request.GET['query'] = query
