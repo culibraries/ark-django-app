@@ -6,9 +6,9 @@ _author__ = 'mstacy'
 
 urlpatterns = [
     path('', ArkServer.as_view(), name='ark-list'),
-    path('<int:naan>/',
+    path('<naan>/',
          arkAcknowledgement.as_view(), name='ark-statement'),
-    path('<int:naan>/<ark>/',
+    path('<naan>/<ark>/',
          ArkServer.as_view(), name='ark-detail'),
 
 ]
