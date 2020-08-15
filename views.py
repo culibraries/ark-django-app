@@ -13,7 +13,7 @@ from django.http import HttpResponseRedirect
 from catalog.views import Catalog, CatalogData, CatalogDataDetail
 from data_store.mongo_paginator import MongoDataPagination
 from data_store.renderer import DataBrowsableAPIRenderer, mongoJSONPRenderer, mongoJSONRenderer
-from .renderer import class customMongoJSONRenderer
+from .renderer import customMongoJSONRenderer
 from rest_framework_xml.renderers import XMLRenderer
 from api import config
 from rest_framework.settings import api_settings
