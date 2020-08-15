@@ -74,7 +74,7 @@ class ArkServer(APIView):
                       for label, group in groups if label == '?']
             # Pull Record
             data = self.pullRecord(request, naan, ark)
-            item = json.loads(data['results'][0])
+            item = data['results'][0]
             if not result:
                 # Resolve
                 return HttpResponseRedirect(item["resolve_url"])
