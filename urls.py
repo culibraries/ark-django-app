@@ -6,7 +6,7 @@ _author__ = 'mstacy'
 
 urlpatterns = [
     path('', ArkServer.as_view(), name='ark-list'),
-    re_path('(?P<naan>[^/]+)/$',
+    re_path('(?P<naan>[^/])/$',
             arkAcknowledgement.as_view(), name='ark-statement'),
     re_path('(?P<naan>[^/]+)/(?P<ark>[^/]+)/$',
             ArkServer.as_view(), name='ark-detail'),
