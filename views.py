@@ -182,4 +182,4 @@ class ArkServer(APIView):
         temp = {"ark": ark, "resolve_url": "",
                 "retired_url": [], "metadata": {}}
         data['ark'] = ark
-        return temp.update(data)
+        return data.update(temp)
