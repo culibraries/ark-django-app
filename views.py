@@ -189,7 +189,7 @@ class ArkServer(APIView):
         return baseRecord
 
 
-class ArkServerDetail(APIView):
+class ArkDetail(APIView):
     permission_classes = (arkPermission,)
     # model = dataStore
     renderer_classes = [DataBrowsableAPIRenderer,
