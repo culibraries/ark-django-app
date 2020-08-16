@@ -203,10 +203,13 @@ class ArkServerDetail(APIView):
         self.db = MongoClient(host=self.connect_uri)
 
     def get(self, request, naan=None, ark=None, format=None):
-        item = self.pullRecord(request, naan, ark)
-        data = MongoDataGet(self.db, 'catalog',
-                            cybercom_ark_collection, item['_id'])
-        return Response(data)
+        try:
+            item = self.pullRecord(request, naan, ark)
+            data = MongoDataGet(self.db, 'catalog',
+                                cybercom_ark_collection, item['_id'])
+            return Response(data)
+        except:
+            return HttpResponseRedirect(request.build_absolute_uri('/ark:/'))
 
     def put(self, request, naan=None, ark=None, format=None):
         item = self.pullRecord(request, naan, ark)
