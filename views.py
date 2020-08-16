@@ -76,6 +76,7 @@ class ArkServer(APIView):
 
             data = MongoDataPagination(
                 self.db, 'catalog', cybercom_ark_collection, query=query, page=page, nPerPage=page_size, uri=url)
+            data = self.cleanID(data)
             return Response(data)
             # return CatalogData.get(database='Catalog', collection=cybercom_ark_collection, format='json')
         elif naan and ark:
@@ -104,6 +105,12 @@ class ArkServer(APIView):
             data = {
                 "error": "Error occured both NAAN and ARK are required for GET operations. Please "}
             return Response(data)
+
+    def cleanID(self, data):
+        new_results = [{k: v for k, v in d.items() if k != '_id'}
+                       for d in data['results']]
+        data['results'] = new_results
+        return data
 
     def post(self, request, naan=None, ark=None, format=None):
         """
@@ -198,13 +205,17 @@ class ArkServerDetail(APIView):
             item = self.pullRecord(request, naan, ark)
             data = MongoDataGet(self.db, 'catalog',
                                 cybercom_ark_collection, item['_id'])
+            data = self.cleanID(data)
             return Response(data)
         except:
             return HttpResponseRedirect(request.build_absolute_uri('/ark:/'))
 
     def put(self, request, naan=None, ark=None, format=None):
         item = self.pullRecord(request, naan, ark)
-        return Response(MongoDataSave(self.db, 'catalog', cybercom_ark_collection, item['_id'], request.data))
+        data = MongoDataSave(
+            self.db, 'catalog', cybercom_ark_collection, item['_id'], request.data)
+        data = self.cleanID(data)
+        return Response(data)
 
     def delete(self, request, naan=None, ark=None, format=None):
         item = self.pullRecord(request, naan, ark)
@@ -230,3 +241,9 @@ class ArkServerDetail(APIView):
         data = MongoDataPagination(
             self.db, 'catalog', cybercom_ark_collection, query=query, page=page, nPerPage=page_size, uri=url)
         return data['results'][0]
+
+    def cleanID(self, data):
+        new_results = [{k: v for k, v in d.items() if k != '_id'}
+                       for d in data['results']]
+        data['results'] = new_results
+        return data
