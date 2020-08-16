@@ -201,14 +201,14 @@ class ArkServerDetail(APIView):
         self.db = MongoClient(host=self.connect_uri)
 
     def get(self, request, naan=None, ark=None, format=None):
-        # try:
-        item = self.pullRecord(request, naan, ark)
-        data = MongoDataGet(self.db, 'catalog',
-                            cybercom_ark_collection, item['_id'])
-        data = self.cleanID(data)
-        return Response(data)
-        # except:
-        #    return HttpResponseRedirect(request.build_absolute_uri('/ark:/'))
+        try:
+            item = self.pullRecord(request, naan, ark)
+            data = MongoDataGet(self.db, 'catalog',
+                                cybercom_ark_collection, item['_id'])
+            data = self.cleanID(data)
+            return Response(data)
+        except:
+            return HttpResponseRedirect(request.build_absolute_uri('/ark:/'))
 
     def put(self, request, naan=None, ark=None, format=None):
         item = self.pullRecord(request, naan, ark)
@@ -243,7 +243,5 @@ class ArkServerDetail(APIView):
         return data['results'][0]
 
     def cleanID(self, data):
-        new_results = [{k: v for k, v in d.items() if k != '_id'}
-                       for d in data['results']]
-        data['results'] = new_results
+        data.pop('_id', None)
         return data
