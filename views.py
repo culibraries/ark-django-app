@@ -14,15 +14,11 @@ from itertools import groupby
 from api import config
 # Permissions
 from .permission import arkPermission
-
-# from catalog.views import Catalog, CatalogData, CatalogDataDetail
 # Leverage Data Store code
 from data_store.mongo_paginator import MongoDataPagination, MongoDataSave, MongoDataInsert, MongoDataDelete, MongoDataGet
 from data_store.renderer import DataBrowsableAPIRenderer, mongoJSONPRenderer, mongoJSONRenderer
 
-
-# (DB_MongoClient, database, collection, query=None, page=1, nPerPage=None, uri=''):
-
+# Default ARK collection
 cybercom_ark_collection = os.getenv('ARK_CATALOG_COLLECTION', 'ark')
 
 
@@ -43,7 +39,7 @@ class arkMetadata(APIView):
     renderer_classes = [TemplateHTMLRenderer]
 
     def get(self, request, naan=None, format=None):
-        return Response({}, template_name='metadataAcknowledgement.html.js')
+        return Response({}, template_name='arkMetadata.html.js')
 
 
 class ArkServer(APIView):
@@ -51,8 +47,6 @@ class ArkServer(APIView):
     connect_uri = config.DATA_STORE_MONGO_URI
     renderer_classes = [mongoJSONRenderer, DataBrowsableAPIRenderer,
                         XMLRenderer]
-    # mongoJSONRenderer,
-    # XMLRenderer, mongoJSONRenderer, DataBrowsableAPIRenderer
 
     def __init__(self):
         self.db = MongoClient(host=self.connect_uri)
@@ -153,10 +147,6 @@ class ArkServer(APIView):
         query = '{"filter":{"ark":"' + naan + '/' + ark + '"}}'
         data = MongoDataPagination(
             self.db, 'catalog', cybercom_ark_collection, query=query, page=page, nPerPage=page_size, uri=url)
-        # request.GET['query'] = query
-        # data = CatalogData.get(request, database='Catalog',
-        #                        collection=cybercom_ark_collection, format='json')
-
         return data
 
     def saveCatlog(self, recorddata):
