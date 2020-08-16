@@ -126,9 +126,9 @@ class ArkServer(APIView):
         # Set Metadata
         arkMeta = self.registerARK(ark, request.data)
         # Store Metadata
-        self.saveCatlog(request)
+        self.saveCatlog(arkMeta)
 
-        return Response(ark)
+        return Response(arkMeta)
 
     def pullRecord(self, request, naan, ark):
         url = request and request.build_absolute_uri() or ''
@@ -153,9 +153,9 @@ class ArkServer(APIView):
 
         return data
 
-    def saveCatlog(self, request):
+    def saveCatlog(self, recorddata):
         data = MongoDataInsert(
-            self.db, 'catalog', cybercom_ark_collection, request.data)
+            self.db, 'catalog', cybercom_ark_collection, recorddata)
         return data
 
     def mint(self, request, naan, template, prefix):
@@ -181,5 +181,5 @@ class ArkServer(APIView):
     def registerARK(self, ark, data):
         baseRecord = {"ark": ark, "resolve_url": "",
                       "retired_url": [], "metadata": {}}
-        #data['ark'] = ark
-        return baseRecord.update(data)
+        baseRecord.update(data)
+        return baseRecord
