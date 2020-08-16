@@ -158,9 +158,9 @@ class ArkServer(APIView):
             request, database='Catalog', collection=cybercom_ark_collection, format='json')
         return data
 
-    def mint(self, naan, template, prefix):
+    def mint(self, request, naan, template, prefix):
         ark = arkpy.mint(naan, template, prefix)
-        while (not (self.checkArk(ark))):
+        while (not (self.checkArk(request, ark))):
             ark = arkpy.mint(naan, template, prefix)
 
         return ark
@@ -173,7 +173,7 @@ class ArkServer(APIView):
             return False
         # Catalog URL
         naan, ark = ark.split('/')
-        data = json.loads(self.pullRecord(request, naan, ark))
+        data = self.pullRecord(request, naan, ark)
         if data['count'] > 0:
             return False
         return True
