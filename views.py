@@ -76,7 +76,7 @@ class ArkServer(APIView):
 
             data = MongoDataPagination(
                 self.db, 'catalog', cybercom_ark_collection, query=query, page=page, nPerPage=page_size, uri=url)
-            data = self.cleanID(data)
+            data = self.cleanID(request, data)
             return Response(data)
             # return CatalogData.get(database='Catalog', collection=cybercom_ark_collection, format='json')
         elif naan and ark:
@@ -106,9 +106,12 @@ class ArkServer(APIView):
                 "error": "Error occured both NAAN and ARK are required for GET operations. Please "}
             return Response(data)
 
-    def cleanID(self, data):
+    def cleanID(self, request, data):
         new_results = [{k: v for k, v in d.items() if k != '_id'}
                        for d in data['results']]
+        for item in new_results:
+            item.update(
+                {"url-detail": "{0}/{1}/detail".format(request.build_absolute_uri('/ark:/'), item['ark'])})
         data['results'] = new_results
         return data
 
