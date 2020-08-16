@@ -65,6 +65,7 @@ class ArkServer(APIView):
         if not naan:
             # return list of arks
             # request.GET['collection'] = cybercom_ark_collection
+            query = request.query_params.get('query', None)
             page = int(request.query_params.get('page', '1'))
             page_size = request.query_params.get(api_settings.user_settings.get('PAGINATE_BY_PARAM', 'page_size'),
                                                  api_settings.user_settings.get('PAGINATE_BY', 10))
@@ -79,7 +80,7 @@ class ArkServer(APIView):
                     api_settings.user_settings.get('PAGINATE_BY', 25))
 
             data = MongoDataPagination(
-                self.db, 'catalog', cybercom_ark_collection, query={}, page=page, nPerPage=page_size, uri=url)
+                self.db, 'catalog', cybercom_ark_collection, query=query, page=page, nPerPage=page_size, uri=url)
             return Response(data)
             # return CatalogData.get(database='Catalog', collection=cybercom_ark_collection, format='json')
         elif naan and ark:
@@ -194,38 +195,41 @@ class ArkServerDetail(APIView):
     permission_classes = (arkPermission,)
     # model = dataStore
     renderer_classes = [DataBrowsableAPIRenderer,
-        mongoJSONRenderer, XMLRenderer]
+                        mongoJSONRenderer, XMLRenderer]
     parser_classes = [JSONParser]
     connect_uri = config.DATA_STORE_MONGO_URI
 
     def __init__(self):
         self.db = MongoClient(host=self.connect_uri)
-        request, naan = None, ark = None, format = None)
-    def get(self, request, naan = None, ark = None, format = None):
-        item=self.pullRecord(request, naan, ark)
+
+    def get(self, request, naan=None, ark=None, format=None):
+        item = self.pullRecord(request, naan, ark)
         MongoDataGet(self.db, 'catalog', cybercom_ark_collection, item['_id'])
         return Response(data)
-    def put(self, request, database = None, collection = None, id = None, format = None):
-        item=self.pullRecord(request, naan, ark)
+
+    def put(self, request, database=None, collection=None, id=None, format=None):
+        item = self.pullRecord(request, naan, ark)
         return Response(MongoDataSave(self.db, 'catalog', cybercom_ark_collection, item['_id'], request.data))
-    def delete(self, request, database = None, collection = None, id = None, format = None):
-        item=self.pullRecord(request, naan, ark)
-        result=MongoDataDelete(
+
+    def delete(self, request, database=None, collection=None, id=None, format=None):
+        item = self.pullRecord(request, naan, ark)
+        result = MongoDataDelete(
             self.db, 'catalog', cybercom_ark_collection, item['_id'])
         return Response({"deleted_count": result.deleted_count, "_id": id})
+
     def pullRecord(self, request, naan, ark):
-        url=request and request.build_absolute_uri() or ''
-        page=int(request.query_params.get('page', '1'))
-        page_size=request.query_params.get(api_settings.user_settings.get('PAGINATE_BY_PARAM', 'page_size'),
+        url = request and request.build_absolute_uri() or ''
+        page = int(request.query_params.get('page', '1'))
+        page_size = request.query_params.get(api_settings.user_settings.get('PAGINATE_BY_PARAM', 'page_size'),
                                              api_settings.user_settings.get('PAGINATE_BY', 10))
         try:
-            page=int(request.query_params.get('page', 1))
+            page = int(request.query_params.get('page', 1))
         except:
-            page=1
+            page = 1
         try:
-            page_size=int(page_size)
+            page_size = int(page_size)
         except:
-            page_size=int(
+            page_size = int(
                 api_settings.user_settings.get('PAGINATE_BY', 25))
         query = '{"filter":{"ark":"' + naan + '/' + ark + '"}}'
         data = MongoDataPagination(
