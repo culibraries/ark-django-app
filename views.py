@@ -122,7 +122,7 @@ class ArkServer(APIView):
         template = request.query_params.get('template', 'eeddeeddeeddeeeek')
 
         # Mint
-        ark = self.mint(naan, template, prefix)
+        ark = self.mint(request, naan, template, prefix)
         # Set Metadata
         arkMeta = self.registerARK(ark, request.data)
         # Store Metadata
