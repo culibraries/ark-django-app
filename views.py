@@ -14,9 +14,10 @@ from itertools import groupby
 from api import config
 # Permissions
 from .permission import arkPermission
+from .renderer import DataBrowsableAPIRenderer
 # Leverage Data Store code
 from data_store.mongo_paginator import MongoDataPagination, MongoDataSave, MongoDataInsert, MongoDataDelete, MongoDataGet
-from data_store.renderer import DataBrowsableAPIRenderer, mongoJSONPRenderer, mongoJSONRenderer
+from data_store.renderer import mongoJSONPRenderer, mongoJSONRenderer
 
 # Default ARK collection
 cybercom_ark_collection = os.getenv('ARK_CATALOG_COLLECTION', 'ark')
