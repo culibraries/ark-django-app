@@ -111,7 +111,7 @@ class ArkServer(APIView):
                        for d in data['results']]
         for item in new_results:
             item.update(
-                {"url-detail": "{0}/{1}/detail".format(request.build_absolute_uri('/ark:/'), item['ark'])})
+                {"ark-detail": "{0}/{1}/detail".format(request.build_absolute_uri('/ark:'), item['ark'])})
         data['results'] = new_results
         return data
 
