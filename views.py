@@ -2,21 +2,25 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework_xml.renderers import XMLRenderer
+from rest_framework.parsers import JSONParser
+from django.http import HttpResponseRedirect
+from rest_framework.settings import api_settings
 import json
 import os
-# import requests
-# import base64
 import arkpy
-from .permission import arkPermission
-from itertools import groupby
-from django.http import HttpResponseRedirect
-from catalog.views import Catalog, CatalogData, CatalogDataDetail
-from data_store.mongo_paginator import MongoDataPagination, MongoDataSave, MongoDataInsert
-from data_store.renderer import DataBrowsableAPIRenderer, mongoJSONPRenderer, mongoJSONRenderer
-from rest_framework_xml.renderers import XMLRenderer
-from api import config
-from rest_framework.settings import api_settings
 from pymongo import MongoClient
+from itertools import groupby
+from api import config
+# Permissions
+from .permission import arkPermission
+
+# from catalog.views import Catalog, CatalogData, CatalogDataDetail
+# Leverage Data Store code
+from data_store.mongo_paginator import MongoDataPagination, MongoDataSave, MongoDataInsert, MongoDataDelete, MongoDataGet
+from data_store.renderer import DataBrowsableAPIRenderer, mongoJSONPRenderer, mongoJSONRenderer
+
+
 # (DB_MongoClient, database, collection, query=None, page=1, nPerPage=None, uri=''):
 
 cybercom_ark_collection = os.getenv('ARK_CATALOG_COLLECTION', 'ark')
@@ -60,7 +64,7 @@ class ArkServer(APIView):
         format = format or 'json'
         if not naan:
             # return list of arks
-            #request.GET['collection'] = cybercom_ark_collection
+            # request.GET['collection'] = cybercom_ark_collection
             page = int(request.query_params.get('page', '1'))
             page_size = request.query_params.get(api_settings.user_settings.get('PAGINATE_BY_PARAM', 'page_size'),
                                                  api_settings.user_settings.get('PAGINATE_BY', 10))
@@ -93,7 +97,8 @@ class ArkServer(APIView):
                 return HttpResponseRedirect(item["resolve_url"])
             elif result[0][1] >= 2:
                 # expanded response
-                return Response(item)
+                return HttpResponseRedirect("{0}/detail".format(url.replace('?', '')))
+                # Response(item)
             # elif result[0][1] >= 3:
             #     # check for ? ?? or ??? if no question marks resolve
             #     return Response(item)
@@ -106,7 +111,7 @@ class ArkServer(APIView):
 
     def post(self, request, naan=None, ark=None, format=None):
         """
-        Mint Ark with data stored in data catalog 
+        Mint Ark with data stored in data catalog
         ARGS: naan - defaults to CU Boulder
               prefix - defaults ''
               template - default 'eeddeeddeeddeeeek'
@@ -115,7 +120,7 @@ class ArkServer(APIView):
         # NAAN - set default to CU Boulder if NAAN not provided
         # This option is to allow multiple ARK registration with different NAAN
         naan = naan or '47540'
-        #naan = request.query_params.get('naan', '47540')
+        # naan = request.query_params.get('naan', '47540')
         # prefix - default ''
         prefix = request.query_params.get('prefix', '')
         # template - default 'eeddeeddeeddeeeek'
@@ -183,3 +188,46 @@ class ArkServer(APIView):
                       "retired_url": [], "metadata": {}}
         baseRecord.update(data)
         return baseRecord
+
+
+class ArkServerDetail(APIView):
+    permission_classes = (arkPermission,)
+    # model = dataStore
+    renderer_classes = [DataBrowsableAPIRenderer,
+        mongoJSONRenderer, XMLRenderer]
+    parser_classes = [JSONParser]
+    connect_uri = config.DATA_STORE_MONGO_URI
+
+    def __init__(self):
+        self.db = MongoClient(host=self.connect_uri)
+        request, naan = None, ark = None, format = None)
+    def get(self, request, naan = None, ark = None, format = None):
+        item=self.pullRecord(request, naan, ark)
+        MongoDataGet(self.db, 'catalog', cybercom_ark_collection, item['_id'])
+        return Response(data)
+    def put(self, request, database = None, collection = None, id = None, format = None):
+        item=self.pullRecord(request, naan, ark)
+        return Response(MongoDataSave(self.db, 'catalog', cybercom_ark_collection, item['_id'], request.data))
+    def delete(self, request, database = None, collection = None, id = None, format = None):
+        item=self.pullRecord(request, naan, ark)
+        result=MongoDataDelete(
+            self.db, 'catalog', cybercom_ark_collection, item['_id'])
+        return Response({"deleted_count": result.deleted_count, "_id": id})
+    def pullRecord(self, request, naan, ark):
+        url=request and request.build_absolute_uri() or ''
+        page=int(request.query_params.get('page', '1'))
+        page_size=request.query_params.get(api_settings.user_settings.get('PAGINATE_BY_PARAM', 'page_size'),
+                                             api_settings.user_settings.get('PAGINATE_BY', 10))
+        try:
+            page=int(request.query_params.get('page', 1))
+        except:
+            page=1
+        try:
+            page_size=int(page_size)
+        except:
+            page_size=int(
+                api_settings.user_settings.get('PAGINATE_BY', 25))
+        query = '{"filter":{"ark":"' + naan + '/' + ark + '"}}'
+        data = MongoDataPagination(
+            self.db, 'catalog', cybercom_ark_collection, query=query, page=page, nPerPage=page_size, uri=url)
+        return data['results'][0]
