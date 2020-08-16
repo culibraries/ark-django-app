@@ -11,7 +11,7 @@ from .permission import arkPermission
 from itertools import groupby
 from django.http import HttpResponseRedirect
 from catalog.views import Catalog, CatalogData, CatalogDataDetail
-from data_store.mongo_paginator import MongoDataPagination
+from data_store.mongo_paginator import MongoDataPagination, MongoDataSave, MongoDataInsert
 from data_store.renderer import DataBrowsableAPIRenderer, mongoJSONPRenderer, mongoJSONRenderer
 from rest_framework_xml.renderers import XMLRenderer
 from api import config
@@ -128,7 +128,7 @@ class ArkServer(APIView):
         # Store Metadata
         self.saveCatlog(request)
 
-        return ark
+        return Response(ark)
 
     def pullRecord(self, request, naan, ark):
         url = request and request.build_absolute_uri() or ''
@@ -154,8 +154,8 @@ class ArkServer(APIView):
         return data
 
     def saveCatlog(self, request):
-        data = CatalogData.post(
-            request, database='Catalog', collection=cybercom_ark_collection, format='json')
+        data = MongoDataInsert(
+            self.db, 'catalog', cybercom_ark_collection, request.data)
         return data
 
     def mint(self, request, naan, template, prefix):
