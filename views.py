@@ -179,7 +179,7 @@ class ArkServer(APIView):
         return True
 
     def registerARK(self, ark, data):
-        temp = {"ark": ark, "resolve_url": "",
-                "retired_url": [], "metadata": {}}
-        data['ark'] = ark
-        return data.update(temp)
+        baseRecord = {"ark": ark, "resolve_url": "",
+                      "retired_url": [], "metadata": {}}
+        #data['ark'] = ark
+        return baseRecord.update(data)
