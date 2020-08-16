@@ -243,5 +243,6 @@ class ArkServerDetail(APIView):
         return data['results'][0]
 
     def cleanID(self, data):
-        data.pop('_id', None)
+        if '_id' in data:
+            del data['_id']
         return data
