@@ -204,7 +204,8 @@ class ArkServerDetail(APIView):
 
     def get(self, request, naan=None, ark=None, format=None):
         item = self.pullRecord(request, naan, ark)
-        MongoDataGet(self.db, 'catalog', cybercom_ark_collection, item['_id'])
+        data = MongoDataGet(self.db, 'catalog',
+                            cybercom_ark_collection, item['_id'])
         return Response(data)
 
     def put(self, request, database=None, collection=None, id=None, format=None):
