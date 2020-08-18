@@ -138,8 +138,10 @@ class ArkServer(APIView):
         arkMeta = self.registerARK(ark, request.data)
         # Store Metadata
         self.saveCatlog(arkMeta)
-
-        return Response(arkMeta)
+        url = request.build_absolute_uri('/ark:/')
+        query = {"filter": {"ark": ark}}
+        url = '{0}?query={1}'.format(url, json.dumps(query))
+        return HttpResponseRedirect(url)
 
     def pullRecord(self, request, naan, ark):
         url = request and request.build_absolute_uri() or ''
