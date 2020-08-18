@@ -5,6 +5,7 @@ from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework_xml.renderers import XMLRenderer
 from rest_framework.parsers import JSONParser
 from django.http import HttpResponseRedirect
+from rest_framework.exceptions import APIException
 from rest_framework.settings import api_settings
 import json
 import os
@@ -13,7 +14,7 @@ from pymongo import MongoClient
 from itertools import groupby
 from api import config
 # Permissions
-from .permission import arkPermission, custom_exception_handler
+from .permission import arkPermission
 from .renderer import DataBrowsableAPIRenderer
 # Leverage Data Store code
 from data_store.mongo_paginator import MongoDataPagination, MongoDataSave, MongoDataInsert, MongoDataDelete, MongoDataGet
@@ -94,10 +95,13 @@ class ArkServer(APIView):
                 try:
                     return HttpResponseRedirect(item["resolve_url"])
                 except:
-                    raise custom_exception_handler()
+                    raise APIException("resolve_url is not active")
             elif result[0][1] >= 2:
                 # expanded response
-                return HttpResponseRedirect("{0}/detail".format(url.replace('?', '')))
+                try:
+                    return HttpResponseRedirect("{0}/detail".format(url.replace('?', '')))
+                except:
+                    raise APIException("redirect error to ark detail view")
                 # Response(item)
             # elif result[0][1] >= 3:
             #     # check for ? ?? or ??? if no question marks resolve
