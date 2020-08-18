@@ -226,13 +226,8 @@ class ArkDetail(APIView):
         item = self.pullRecord(request, naan, ark)
         data = MongoDataSave(
             self.db, 'catalog', cybercom_ark_collection, item['_id'], request.data)
-        #data = self.cleanID(data)
-        # return Response(data)
-        url = request.build_absolute_uri('/ark:/')
-        query = {"filter": {"ark": request.data['ark']}}
-        url = '{0}?query={1}'.format(url, json.dumps(query))
-        return HttpResponseRedirect(url)
-        # return HttpResponseRedirect(request.build_absolute_uri())
+
+        return HttpResponseRedirect(request.build_absolute_uri())
 
     def delete(self, request, naan=None, ark=None, format=None):
         item = self.pullRecord(request, naan, ark)
