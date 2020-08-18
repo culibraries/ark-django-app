@@ -229,7 +229,7 @@ class ArkDetail(APIView):
         #data = self.cleanID(data)
         # return Response(data)
         url = request.build_absolute_uri('/ark:/')
-        query = {"filter": {"ark": data['ark']}}
+        query = {"filter": {"ark": request.data['ark']}}
         url = '{0}?query={1}'.format(url, json.dumps(query))
         return HttpResponseRedirect(url)
         # return HttpResponseRedirect(request.build_absolute_uri())
