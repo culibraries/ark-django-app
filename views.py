@@ -13,7 +13,7 @@ from pymongo import MongoClient
 from itertools import groupby
 from api import config
 # Permissions
-from .permission import arkPermission
+from .permission import arkPermission, custom_exception_handler
 from .renderer import DataBrowsableAPIRenderer
 # Leverage Data Store code
 from data_store.mongo_paginator import MongoDataPagination, MongoDataSave, MongoDataInsert, MongoDataDelete, MongoDataGet
@@ -91,7 +91,10 @@ class ArkServer(APIView):
             item = data['results'][0]
             if not result:
                 # Resolve
-                return HttpResponseRedirect(item["resolve_url"])
+                try:
+                    return HttpResponseRedirect(item["resolve_url"])
+                except:
+                    raise custom_exception_handler()
             elif result[0][1] >= 2:
                 # expanded response
                 return HttpResponseRedirect("{0}/detail".format(url.replace('?', '')))
