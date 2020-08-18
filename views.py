@@ -228,7 +228,11 @@ class ArkDetail(APIView):
             self.db, 'catalog', cybercom_ark_collection, item['_id'], request.data)
         #data = self.cleanID(data)
         # return Response(data)
-        return HttpResponseRedirect(request.build_absolute_uri())
+        url = request.build_absolute_uri('/ark:/')
+        query = {"filter": {"ark": data['ark']}}
+        url = '{0}?query={1}'.format(url, json.dumps(query))
+        return HttpResponseRedirect(url)
+        # return HttpResponseRedirect(request.build_absolute_uri())
 
     def delete(self, request, naan=None, ark=None, format=None):
         item = self.pullRecord(request, naan, ark)
