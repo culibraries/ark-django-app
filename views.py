@@ -146,8 +146,8 @@ class ArkServer(APIView):
             ark = self.mint(request, naan, template, prefix)
         else:
             ark = request.data['ark']
-            self.checkArk(self, request, ark):
-                # Set Metadata
+            self.checkArk(self, request, ark)
+        # Set Metadata
         arkMeta = self.registerARK(ark, request.data)
         # Store Metadata
         self.saveCatlog(arkMeta)
