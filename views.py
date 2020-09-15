@@ -138,16 +138,24 @@ class ArkServer(APIView):
         prefix = request.query_params.get('prefix', '')
         # template - default 'eeddeeddeeddeeeek'
         template = request.query_params.get('template', 'eeddeeddeeddeeeek')
-
-        # Mint
-        ark = self.mint(request, naan, template, prefix)
-        # Set Metadata
+        mintark = True
+        if 'ark' in request.data and request.data['ark'].strip() != '':
+            mintark = False
+        if mintark:
+            # Mint
+            ark = self.mint(request, naan, template, prefix)
+        else:
+            ark = request.data['ark']
+            self.checkArk(self, request, ark):
+                # Set Metadata
         arkMeta = self.registerARK(ark, request.data)
         # Store Metadata
         self.saveCatlog(arkMeta)
         url = request.build_absolute_uri('/ark:/')
         query = {"filter": {"ark": ark}}
         url = '{0}?query={1}'.format(url, json.dumps(query))
+        if format and format != 'api':
+            url = "{0}&format={1}".format(url, format)
         return HttpResponseRedirect(url)
 
     def pullRecord(self, request, naan, ark):
@@ -185,8 +193,8 @@ class ArkServer(APIView):
         """
         Check if valid ARk. Plus check unique within data catalog
         """
-        if not arkpy.validate(ark):
-            return False
+        # if not arkpy.validate(ark):
+        #     return False
         # Catalog URL
         naan, ark = ark.split('/')
         data = self.pullRecord(request, naan, ark)
