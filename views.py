@@ -19,6 +19,14 @@ from .renderer import DataBrowsableAPIRenderer
 # Leverage Data Store code
 from data_store.mongo_paginator import MongoDataPagination, MongoDataSave, MongoDataInsert, MongoDataDelete, MongoDataGet
 from data_store.renderer import mongoJSONPRenderer, mongoJSONRenderer
+from rest_framework.exceptions import APIException
+
+
+class arkUniqueError(APIException):
+    status_code = 400
+    default_detail = 'ARKs need to be unique. Please update the existing ARK or submit a new response with a unique ARK.'
+    default_code = 'ARK Unique Error'
+
 
 # Default ARK collection
 cybercom_ark_collection = os.getenv('ARK_CATALOG_COLLECTION', 'ark')
@@ -146,7 +154,8 @@ class ArkServer(APIView):
             ark = self.mint(request, naan, template, prefix)
         else:
             ark = request.data['ark']
-            self.checkArk(request, ark)
+            if not self.checkArk(request, ark):
+                raise arkUniqueError()
         # Set Metadata
         arkMeta = self.registerARK(ark, request.data)
         # Store Metadata
