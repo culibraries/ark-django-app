@@ -28,6 +28,12 @@ class arkUniqueError(APIException):
     default_code = 'ARK Unique Error'
 
 
+class arkValidationError(APIException):
+    status_code = 400
+    default_detail = "ARKs require a NAAN/Identifier. This error generated regarding '/' not within ARK submitted. No other checks are currently performed."
+    default_code = 'ARK Validation Error'
+
+
 # Default ARK collection
 cybercom_ark_collection = os.getenv('ARK_CATALOG_COLLECTION', 'ark')
 
@@ -205,7 +211,10 @@ class ArkServer(APIView):
         # if not arkpy.validate(ark):
         #     return False
         # Catalog URL
-        naan, ark = ark.split('/')
+        try:
+            naan, ark = ark.split('/'):
+        except:
+            raise arkValidationError()
         data = self.pullRecord(request, naan, ark)
         if data['count'] > 0:
             return False
