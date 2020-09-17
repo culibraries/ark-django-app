@@ -151,7 +151,7 @@ class ArkServer(APIView):
         # prefix - default ''
         prefix = request.query_params.get('prefix', '')
         # template - default 'eeddeeddeeddeeeek'
-        template = request.query_params.get('template', 'eeddeeddeeddeeeek')
+        template = request.query_params.get('template', 'eedededdeek')
         mintark = True
         if 'ark' in request.data and request.data['ark'].strip() != '':
             mintark = False
