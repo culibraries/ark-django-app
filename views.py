@@ -212,7 +212,7 @@ class ArkServer(APIView):
         #     return False
         # Catalog URL
         try:
-            naan, ark = ark.split('/'):
+            naan, ark = ark.split('/')
         except:
             raise arkValidationError()
         data = self.pullRecord(request, naan, ark)
