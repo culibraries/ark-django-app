@@ -107,6 +107,15 @@ class ArkServer(APIView):
             if not result:
                 # Resolve
                 try:
+                    # Show Tombstone if ARK status is removed
+                    if item['status'].lower() == 'removed':
+                        url = url.replace('?', '')
+                        if url.strip()[-1] == '/':
+                            url = url[:-1]
+                        return HttpResponseRedirect("{0}/detail".format(url))
+                except:
+                    pass
+                try:
                     return HttpResponseRedirect(item["resolve_url"])
                 except:
                     raise APIException("resolve_url is not active")
