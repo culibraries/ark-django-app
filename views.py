@@ -113,6 +113,8 @@ class ArkServer(APIView):
             elif result[0][1] >= 2:
                 # expanded response
                 try:
+                    if url.strip()[-1] == '/':
+                        url = url[:-1]
                     return HttpResponseRedirect("{0}/detail".format(url.replace('?', '')))
                 except:
                     raise APIException("redirect error to ark detail view")
