@@ -22,6 +22,12 @@ from data_store.renderer import mongoJSONPRenderer, mongoJSONRenderer
 from rest_framework.exceptions import APIException
 
 
+class arkMissingError(APIException):
+    status_code = 400
+    default_detail = 'The ARK was not found. Please make sure the submitted ARK url has been minted.'
+    default_code = 'Missing ARK Error'
+
+
 class arkUniqueError(APIException):
     status_code = 400
     default_detail = 'ARKs need to be unique. Please update the existing ARK or submit a new response with a unique ARK.'
@@ -101,9 +107,12 @@ class ArkServer(APIView):
             groups = groupby(url)
             result = [(label, sum(1 for _ in group))
                       for label, group in groups if label == '?']
-            # Pull Record
-            data = self.pullRecord(request, naan, ark)
-            item = data['results'][0]
+            try:
+                # Pull Record
+                data = self.pullRecord(request, naan, ark)
+                item = data['results'][0]
+            except:
+                raise arkMissingError()
             if not result:
                 # Resolve
                 try:
