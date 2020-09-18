@@ -13,8 +13,11 @@ class DataBrowsableAPIRenderer(BrowsableAPIRenderer):
         i = 0
         crumbs = ['Ark Root', 'NAAN', 'Name', 'Detail']
         for k, v in context['breadcrumblist']:
-            temp.append((crumbs[i], v))
-            i = i + 1
+            try:
+                temp.append((crumbs[i], v))
+                i = i + 1
+            except:
+                pass
         context['breadcrumblist'] = temp
 
         return context
