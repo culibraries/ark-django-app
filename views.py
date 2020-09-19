@@ -280,7 +280,7 @@ class ArkDetail(APIView):
         item = self.pullRecord(request, naan, ark)
         result = MongoDataDelete(
             self.db, 'catalog', cybercom_ark_collection, item['_id'])
-        return Response({"deleted_count": result.deleted_count, "_id": id})
+        return Response({"deleted_count": result.deleted_count, "_id": item['_id']})
 
     def pullRecord(self, request, naan, ark):
         url = request and request.build_absolute_uri() or ''
